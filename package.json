@@ -1,0 +1,36 @@
+{
+  "name": "image-upload",
+  "version": "1.0.0",
+  "description": "image-upload component",
+  "main": "build/bundle.min.js",
+  "scripts": {
+    "dev": "NODE_ENV=development rollup --watch -c ./rollup.config.js",
+    "build": "NODE_ENV=production rollup -c ./rollup.config.js",
+    "server": "http-server ./",
+    "start": "npm run dev | npm run server"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tonis2/image-upload.git"
+  },
+  "author": "tonis",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/tonis2/image-upload/issues"
+  },
+  "homepage": "https://github.com/tonis2/image-upload#readme",
+  "devDependencies": {
+    "babel-core": "^6.26.0",
+    "babel-plugin-external-helpers": "^6.22.0",
+    "babel-preset-env": "^1.6.1",
+    "babel-preset-omi": "^0.1.1",
+    "http-server": "latest",
+    "omi": "^4.0.1",
+    "rollup": "^0.58.2",
+    "rollup-plugin-babel": "^3.0.4",
+    "rollup-plugin-commonjs": "^9.1.0",
+    "rollup-plugin-node-resolve": "^3.3.0",
+    "rollup-plugin-replace": "^2.0.0",
+    "rollup-plugin-uglify": "^6.0.0"
+  }
+}
