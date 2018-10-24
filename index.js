@@ -5,13 +5,7 @@ class Uploader extends WeElement {
     this.previewFile = this.previewFile.bind(this);
     this.inputUpload = this.inputUpload.bind(this);
     this.ready = this.ready.bind(this);
-    this.images = new Proxy([], {
-      set: (target, prop, value) => {
-        target[prop] = value;
-        this.update();
-        return true;
-      }
-    });
+    this.images = [];
   }
   installed() {
     ["dragenter", "dragover", "dragleave", "drop"].forEach(eventName => {
@@ -34,9 +28,7 @@ class Uploader extends WeElement {
 
   ready(event) {
     this.preventDefault(event);
-    const images = Object.assign({}, this.images);
-    this.fire("upload", { images: images });
-    event.stopPropagation();
+    this.fire("upload", { images: this.images });
   }
 
   css() {
@@ -45,7 +37,7 @@ class Uploader extends WeElement {
             padding:15px;
             width:${this.getAttribute("width")};
           }
-          :host(.highlight) {
+          .highlight {
             background:#e67e22;
           }
           #upload-container.filled {
@@ -110,6 +102,11 @@ class Uploader extends WeElement {
             text-align: center;
             color: #fafbfb;
             border-radius: 4px;
+            transition:0.2s ease-in-out;
+          }
+          #ready-button:hover {
+            background: teal;
+            transition:0.2s ease-in-out;
           }
           `;
   }
@@ -135,18 +132,21 @@ class Uploader extends WeElement {
     let reader = new FileReader();
     reader.readAsDataURL(file);
     reader.onloadend = () => {
+      const id = Math.floor(Math.random() * 1000) + 1;
       this.images.push({
         name: file.name,
+        id: id,
         size: file.size,
         result: reader.result,
         file: file
       });
+      this.update();
     };
   }
 
   removeImage(image, event) {
     this.preventDefault(event);
-    this.images = this.images.filter(item => item.name !== image.name);
+    this.images = this.images.filter(item => item.id !== image.id);
     this.update();
   }
 
