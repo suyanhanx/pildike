@@ -59,6 +59,7 @@ class Uploader extends WeElement {
             cursor:pointer;
             position:relative;
             width:100%;
+            min-width:${this.getAttribute("width")};
             min-height:500px;
             display:grid;
             border:dashed 1px #2c3e50;

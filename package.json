@@ -1,6 +1,6 @@
 {
-  "name": "Pildike",
-  "version": "1.0.0",
+  "name": "pildike",
+  "version": "1.0.2",
   "description": "image-upload component",
   "main": "build/bundle.min.js",
   "scripts": {
