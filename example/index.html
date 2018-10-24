@@ -6,8 +6,15 @@
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>image upload example</title>
 </head>
-<body>
-<image-uploader style="width:600px" ></image-uploader>
+<body style="display:flex;justify-content:center;">
+<image-uploader width="700px" background="/assets/upload.svg" accept="image/*" ></image-uploader>
 </body>
+
 <script src="../build/bundle.min.js" charset="utf-8"></script>
+
+<script>
+  document.querySelector("image-uploader").addEventListener("upload", (event) => {
+    console.log(event)
+  })
+</script>
 </html>

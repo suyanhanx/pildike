@@ -2,10 +2,16 @@ import { WeElement } from "omi";
 
 class Uploader extends WeElement {
   install() {
-    this.images = [];
     this.previewFile = this.previewFile.bind(this);
     this.inputUpload = this.inputUpload.bind(this);
-    this.applyImages = this.applyImages.bind(this);
+    this.ready = this.ready.bind(this);
+    this.images = new Proxy([], {
+      set: (target, prop, value) => {
+        target[prop] = value;
+        this.update();
+        return true;
+      }
+    });
   }
   installed() {
     ["dragenter", "dragover", "dragleave", "drop"].forEach(eventName => {
@@ -26,45 +32,83 @@ class Uploader extends WeElement {
       .addEventListener("change", this.inputUpload, false);
   }
 
-  applyImages(event) {
-    this.fire("upload", { images: this.images });
+  ready(event) {
+    this.preventDefault(event);
+    const images = Object.assign({}, this.images);
+    this.fire("upload", { images: images });
     event.stopPropagation();
   }
 
   css() {
     return `:host {
             display:grid;
+            padding:15px;
+            width:${this.getAttribute("width")};
+          }
+          :host(.highlight) {
+            background:#e67e22;
           }
           #upload-container.filled {
             background-image:none;
           }
           #upload-container {
-            background-image:url("/assets/upload.svg");
+            background-image:url(${this.getAttribute("background")});
             background-repeat:no-repeat;
             background-size:contain;
+            background-position:50% 15px;
             cursor:pointer;
             position:relative;
             width:100%;
             min-height:500px;
             display:grid;
-            margin:15px;
-            border:dashed 1px black;
+            border:dashed 1px #2c3e50;
             box-sizing:content-box;
           }
           #image-previews {
             display:grid;
-            position:absolute;
-            top:0;
-            grid-template-columns: repeat(3, 30%);
-            grid-template-rows: repeat(auto-fill, 200px);
-            grid-template-gap:10px;
-            grid-row-gap:10px;
-            margin:10px;
+            grid-template-columns: repeat(3, 0.4fr);
+            grid-auto-rows: max-content;
+            grid-column-gap:20px;
+            grid-row-gap:30px;
+            padding:20px;
           }
           #image-previews img {
-            height:100%;
+            height:150px;
             width:100%;
             display:block;
+          }
+          #image-previews .image-info span {
+            font-size:11px;
+            text-align:center;
+            padding:6px 3px;
+          }
+          .image-info {
+            box-shadow: 2px 1px 5px 1px #7f8c8d;
+            display:grid;
+            position:relative;
+          }
+          .delete-image {
+            position: absolute;
+            right: -7px;
+            top: -9px;
+            color: red;
+            background: white;
+            border-radius: 50%;
+            width: 17px;
+            height: 13px;
+            box-shadow: 1px 1px 2px 1px #7f8c8d;
+          }
+          #ready-button {
+            position: absolute;
+            right: -1px;
+            bottom: -40px;
+            background: #4CAF50;
+            font-size: 20px;
+            padding: 5px 10px;
+            width: 105px;
+            text-align: center;
+            color: #fafbfb;
+            border-radius: 4px;
           }
           `;
   }
@@ -88,26 +132,55 @@ class Uploader extends WeElement {
 
   previewFile(file) {
     let reader = new FileReader();
-    console.log(file)
     reader.readAsDataURL(file);
     reader.onloadend = () => {
-      this.images.push(reader.result);
-      this.update();
+      this.images.push({
+        name: file.name,
+        size: file.size,
+        result: reader.result,
+        file: file
+      });
     };
   }
+
+  removeImage(image, event) {
+    this.preventDefault(event);
+    this.images = this.images.filter(item => item.name !== image.name);
+    this.update();
+  }
+
   render() {
     return (
-      <div id="upload-container" class={this.images.length > 0 ? "filled" : "empty"}>
+      <div
+        id="upload-container"
+        class={this.images.length > 0 ? "filled" : "empty"}
+      >
         <input
           id="file_uploader"
           type="file"
           style="display:none;"
           name="pictures"
-          accept="image/*"
+          accept="{this.getAttribute('accept')}"
           multiple
         />
-        <div id="image-previews" >
-          {this.images.map(img => <img src={img} />)}
+        <div id="image-previews">
+          {this.images.map(img => {
+            return (
+              <div className="image-info">
+                <span
+                  onclick={this.removeImage.bind(this, img)}
+                  className="delete-image"
+                >
+                  &times;
+                </span>
+                <img src={img.result} />
+                <span>{img.name}</span>
+              </div>
+            );
+          })}
+        </div>
+        <div id="ready-button" onclick={this.ready}>
+          Done
         </div>
       </div>
     );
