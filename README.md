@@ -1,6 +1,9 @@
 # Pildike
 > Small but great custom element for uploading images.
 
+![gzip size](http://img.badgesize.io/https://unpkg.com/pildike/build/bundle.min.js?compression=gzip)
+
+
 ### Install
 
 ```js
