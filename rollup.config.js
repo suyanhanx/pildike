@@ -27,7 +27,7 @@ export default {
   input: "./index.js",
   output: {
     file: "build/bundle.min.js",
-    format: "iife"
+    format: "cjs"
   },
   plugins: plugins
 };

@@ -1,4 +1,4 @@
-import { WeElement } from "omi";
+import { WeElement } from "omi/dist/omi.esm.js";
 
 class Uploader extends WeElement {
   install() {
